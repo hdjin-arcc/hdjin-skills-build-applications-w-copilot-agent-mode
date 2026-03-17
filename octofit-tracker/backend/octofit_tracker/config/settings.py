@@ -138,7 +138,9 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 if os.environ.get('CODESPACE_NAME'):
-    CORS_ALLOWED_ORIGINS.append(f"https://{os.environ.get('CODESPACE_NAME')}-3000.app.github.dev")
+    codespace_name = os.environ.get('CODESPACE_NAME')
+    CORS_ALLOWED_ORIGINS.append(f"https://{codespace_name}-3000.app.github.dev")
+    CORS_ALLOWED_ORIGINS.append(f"https://{codespace_name}-8000.app.github.dev")
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_METHODS = [
@@ -160,3 +162,15 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+# HTTPS and Security Settings for Codespaces
+if os.environ.get('CODESPACE_NAME'):
+    # Trust the proxy headers when running behind Codespaces proxy
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    
+    # Allow Codespace URLs as trusted CSRF origins
+    codespace_name = os.environ.get('CODESPACE_NAME')
+    CSRF_TRUSTED_ORIGINS = [
+        f"https://{codespace_name}-3000.app.github.dev",
+        f"https://{codespace_name}-8000.app.github.dev",
+    ]
